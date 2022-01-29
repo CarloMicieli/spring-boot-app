@@ -26,6 +26,7 @@ package io.github.carlomicieli.springbootapp.controllers
 import io.github.carlomicieli.springbootapp.domain.CatalogItem
 import io.github.carlomicieli.springbootapp.repositories.CatalogItemsRepository
 import kotlinx.coroutines.reactor.awaitSingleOrNull
+import org.springframework.hateoas.Link
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -34,7 +35,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Flux
-import reactor.core.publisher.Mono
 import java.util.UUID
 import javax.validation.Valid
 
@@ -56,6 +56,9 @@ class CatalogItemsController(val catalogItemsRepository: CatalogItemsRepository)
     }
 
     @PostMapping
-    fun postCatalogItem(@Valid @RequestBody newCatalogItem: CatalogItem): Mono<UUID> =
-        catalogItemsRepository.save(newCatalogItem).map { it.catalogItemId }
+    suspend fun postCatalogItem(@Valid @RequestBody newCatalogItem: CatalogItem): ResponseEntity<Void> {
+        val newId = catalogItemsRepository.save(newCatalogItem).map { it.catalogItemId }.awaitSingleOrNull()
+        val link = Link.of("/api/catalog_item/{id}")
+        return ResponseEntity.created(link.expand(newId?.toString() ?: "").toUri()).build()
+    }
 }

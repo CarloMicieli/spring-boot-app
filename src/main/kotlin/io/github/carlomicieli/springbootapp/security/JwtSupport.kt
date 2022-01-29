@@ -28,8 +28,6 @@ import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.TokenExpiredException
 import com.auth0.jwt.interfaces.DecodedJWT
-import org.springframework.boot.context.properties.ConfigurationProperties
-import org.springframework.boot.context.properties.ConstructorBinding
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Component
 import java.time.Clock
@@ -73,10 +71,3 @@ class JwtSupport(private val clock: Clock, private val jwtConfiguration: JwtConf
 
     private fun nowPlus(amountToAdd: Long, unit: ChronoUnit): Date = Date.from(clock.instant().plus(amountToAdd, unit))
 }
-
-@ConstructorBinding
-@ConfigurationProperties(prefix = "security.jwt")
-data class JwtConfiguration(
-    val minutes: Long,
-    val secret: String
-)

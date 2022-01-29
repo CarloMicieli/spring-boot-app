@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: v_1_0_0
+      author: "Carlo Micieli"
+      comment: "Initial database schema"
+      sqlFile:
+        encoding: utf8
+        relativeToChangelogFile: true
+        stripComments: true
+        path: "v_1_0_0/main-changelog.sql"

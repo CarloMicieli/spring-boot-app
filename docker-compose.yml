@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: trenakodb
+      POSTGRES_PASSWORD: mysecretpassword
+  web-api:
+    image: docker.io/carlomicieli/spring-boot-app:latest
+    ports:
+      - "80:8080"
+      - "8081:8081"
+    environment:
+      - DB_URL=postgresql://db/trenakodb
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=mysecretpassword
+      - APP_SECRET=tNO+KhVrTj3B4q0+SEwz/NSvZq7y577jOjvY4uPgAR4=
+      - SPRING_PROFILES_ACTIVE=local
+    depends_on:
+      - db

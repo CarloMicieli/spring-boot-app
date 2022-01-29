@@ -54,6 +54,7 @@ object Security {
                 authorizeExchange {
                     authorize("/auth/login", permitAll)
                     authorize("/auth/register", permitAll)
+                    authorize("/health", permitAll)
                 }
                 exceptionHandling {
                     authenticationEntryPoint = ServerAuthenticationEntryPoint { exchange, _ ->
