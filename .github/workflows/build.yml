@@ -26,21 +26,19 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Compile the project
-        run: ./gradlew -q build -x check
+        run: ./gradlew build -x check
 
       - name: Checks that sourcecode satisfies formatting rules
-        run: ./gradlew -q spotlessCheck
+        run: ./gradlew spotlessCheck
 
       - name: Run the unit tests
-        run: ./gradlew -q test
+        run: ./gradlew test
 
       - name: Run the integration tests
-        run: ./gradlew -q integrationTest
+        run: ./gradlew integrationTest
 
       - name: Build docker image
-        run: ./gradlew -q bootBuildImage
-
-
+        run: ./gradlew bootBuildImage
 
       - name: Cleanup Gradle Cache
         # Remove some files from the Gradle cache, so they aren't cached by GitHub Actions.

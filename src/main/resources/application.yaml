@@ -2,9 +2,7 @@ spring:
   application:
     name: spring-app
   liquibase:
-    url: jdbc:${DB_URL:postgresql://localhost:5432/sampledb}
-    user: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:password}
+    enabled: false
   r2dbc:
     url: r2dbc:${DB_URL:postgresql://localhost:5432/sampledb}
     username: ${DB_USERNAME:postgres}
