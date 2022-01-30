@@ -33,6 +33,9 @@ gitVersioning.apply {
 }
 
 configurations {
+    all {
+        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+    }
     implementation {
         resolutionStrategy {
             failOnVersionConflict()
@@ -46,11 +49,11 @@ java {
     }
 }
 
-extra["testcontainersVersion"] = "1.16.2"
-
 repositories {
     mavenCentral()
 }
+
+extra["testcontainersVersion"] = "1.16.2"
 
 dependencies {
     constraints {
@@ -85,11 +88,44 @@ dependencies {
     implementation("org.springframework:spring-jdbc")
     runtimeOnly("io.r2dbc:r2dbc-postgresql")
     runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("net.logstash.logback:logstash-logback-encoder:7.0.1")
+    runtimeOnly("com.fasterxml.jackson.core:jackson-databind")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
-    testImplementation("org.springframework.security:spring-security-test")
-    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("io.kotest:kotest-assertions-core:5.1.0")
+}
+
+testing {
+    suites {
+        val test by getting(JvmTestSuite::class) {
+            useJUnitJupiter()
+        }
+
+        val integrationTest by registering(JvmTestSuite::class) {
+            dependencies {
+                implementation(project)
+
+                implementation("org.springframework.boot:spring-boot-starter-test")
+                implementation("io.projectreactor:reactor-test")
+                implementation("org.springframework.security:spring-security-test")
+                implementation("org.testcontainers:junit-jupiter")
+                implementation("io.kotest:kotest-assertions-core:5.1.0")
+            }
+
+            targets {
+                all {
+                    testTask.configure {
+                        shouldRunAfter(test)
+                        maxHeapSize = "512m"
+                        testLogging {
+                            exceptionFormat = FULL
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 dependencyManagement {
@@ -146,7 +182,7 @@ spotless {
         toggleOffOn("fmt:off", "fmt:on")
         indentWithSpaces()
         trimTrailingWhitespace()
-        licenseHeaderFile("${project.rootDir}/LICENSE")
+        licenseHeaderFile("${project.rootDir}/config/LICENSE")
     }
 
     kotlinGradle {
@@ -159,4 +195,8 @@ spotless {
     tasks.check {
         dependsOn(tasks.spotlessCheck)
     }
+}
+
+tasks.named("check") {
+    dependsOn(testing.suites.named("integrationTest"))
 }

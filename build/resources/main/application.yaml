@@ -29,9 +29,6 @@ management:
   endpoint:
     health:
       enabled: true
-  health:
-    r2dbc:
-      enabled: true
 
 logging:
   level:
@@ -43,3 +40,7 @@ security:
   jwt:
     secret: ${APP_SECRET:tNO+KhVrTj3B4q0+SEwz/NSvZq7y577jOjvY4uPgAR4=}
     minutes: 15
+
+context:
+  initializer:
+    classes: io.github.carlomicieli.springbootapp.BeansInitializer

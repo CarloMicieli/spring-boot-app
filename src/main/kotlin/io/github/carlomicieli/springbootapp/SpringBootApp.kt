@@ -29,10 +29,14 @@ import io.github.carlomicieli.springbootapp.security.Security
 import io.github.carlomicieli.springbootapp.security.UsersRepository
 import kotlinx.coroutines.reactor.awaitSingleOrNull
 import kotlinx.coroutines.runBlocking
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
+import org.springframework.context.ApplicationContextInitializer
+import org.springframework.context.support.GenericApplicationContext
 import org.springframework.context.support.beans
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity
 import java.time.Clock
@@ -45,6 +49,10 @@ class SpringBootApp
 val beans = beans {
     bean<Clock>() {
         Clock.systemDefaultZone()
+    }
+
+    bean<Logger> {
+        LoggerFactory.getLogger("log")
     }
 
     profile("local") {
@@ -63,8 +71,13 @@ val beans = beans {
     }
 }
 
-fun main(args: Array<String>) {
-    runApplication<SpringBootApp>(*args) {
-        addInitializers(beans, Security.beans)
+class BeansInitializer : ApplicationContextInitializer<GenericApplicationContext> {
+    override fun initialize(context: GenericApplicationContext) {
+        beans.initialize(context)
+        Security.beans.initialize(context)
     }
+}
+
+fun main(args: Array<String>) {
+    runApplication<SpringBootApp>(*args)
 }

@@ -4,15 +4,45 @@ services:
   db:
     image: postgres
     ports:
-      - "5432:5432"
+      - 5432:5432
     environment:
       POSTGRES_DB: trenakodb
       POSTGRES_PASSWORD: mysecretpassword
+
+#  elasticsearch:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.3
+#    environment:
+#      - "discovery.type=single-node"
+#    ports:
+#      - 9200:9200
+
+#  kibana:
+#    image: docker.elastic.co/kibana/kibana:7.16.3
+#    ports:
+#      - 5601:5601
+#    environment:
+#      SERVER_NAME: kibana.example.org
+#      ELASTICSEARCH_HOSTS: '["http://elasticsearch:9200"]'
+    #volumes:
+      #- ./config/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+
+#  fluentd:
+#    image: fluent/fluentd:v1.12-1
+#    volumes:
+#      - ./:/fluentd/etc/
+#    ports:
+#      - 24224:24224
+#      - 24224:24224/udp
+#    depends_on:
+#      - elasticsearch
+#    environment:
+#      - FLUENTD_CONF=./config/fluentd/fluentd.conf
+
   web-api:
     image: docker.io/carlomicieli/spring-boot-app:latest
     ports:
-      - "80:8080"
-      - "8081:8081"
+      - 80:8080
+      - 8081:8081
     environment:
       - DB_URL=postgresql://db/trenakodb
       - DB_USERNAME=postgres
@@ -21,3 +51,10 @@ services:
       - SPRING_PROFILES_ACTIVE=local
     depends_on:
       - db
+#      - fluentd
+#    logging:
+#      driver: fluentd
+#      options:
+#        fluentd-address: localhost:24224
+#        tag: "api.{{.ImageName}}"
+#        fluentd-async: "true"

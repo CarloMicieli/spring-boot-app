@@ -26,6 +26,8 @@ package io.github.carlomicieli.springbootapp.controllers
 import io.github.carlomicieli.springbootapp.domain.CatalogItem
 import io.github.carlomicieli.springbootapp.repositories.CatalogItemsRepository
 import kotlinx.coroutines.reactor.awaitSingleOrNull
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.hateoas.Link
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -41,6 +43,10 @@ import javax.validation.Valid
 @RestController
 @RequestMapping("/api/catalog_items")
 class CatalogItemsController(val catalogItemsRepository: CatalogItemsRepository) {
+
+    companion object {
+        private val logger: Logger = LoggerFactory.getLogger(CatalogItemsController::class.java)
+    }
 
     @GetMapping
     fun getAllCatalogItems(): Flux<CatalogItem> = catalogItemsRepository.findAll()
