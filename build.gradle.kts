@@ -135,8 +135,15 @@ dependencyManagement {
 }
 
 tasks.getByName<BootBuildImage>("bootBuildImage") {
-    imageName = "carlomicieli/spring-boot-app:${project.version}"
-    tags = listOf("carlomicieli/spring-boot-app:latest")
+    imageName = "ghcr.io/carlomicieli/${project.name}:${project.version}"
+    tags = listOf("ghcr.io/carlomicieli/${project.name}:latest")
+
+    docker {
+        publishRegistry {
+            url = "ghcr.io"
+            token = System.getenv("GHCR_TOKEN")
+        }
+    }
 }
 
 tasks {
